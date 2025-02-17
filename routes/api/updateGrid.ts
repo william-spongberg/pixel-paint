@@ -5,8 +5,14 @@ import { CellType } from "../../global/types.ts";
 import { GRID, GRID_SIZE } from "../../global/constants.ts";
 import { WebSocketServer } from "ws";
 
-const kv = await Deno.openKv();
-const wss = new WebSocketServer({ port: 8080 });
+// fix deno fresh build infinite hang
+let kv: any = null;
+let wss: any = null;
+const isBuildMode = Deno.args.includes("build");
+if (!isBuildMode) {
+  kv = await Deno.openKv();
+  wss = new WebSocketServer({ port: 8080 });
+}
 
 export const handler: Handlers<CellType> = {
   async GET(_req, _ctx) {
