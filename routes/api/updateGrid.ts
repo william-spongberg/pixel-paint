@@ -3,7 +3,7 @@
 import { Handlers } from "$fresh/server.ts";
 import { CellType } from "../../global/types.ts";
 import { GRID, GRID_SIZE } from "../../global/constants.ts";
-import { WebSocketServer } from "npm:ws";
+import { WebSocketServer } from "ws";
 
 const kv = await Deno.openKv();
 const wss = new WebSocketServer({ port: 8080 });
