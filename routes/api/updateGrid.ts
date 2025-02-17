@@ -10,6 +10,9 @@ if (!isBuildMode) {
   kv = await Deno.openKv();
 }
 
+const postQueue: CellType[] = [];
+let isProcessingQueue = false;
+
 export const handler: Handlers<CellType> = {
   async GET(_req, _ctx) {
     const grid = await kv.get(["grid"]);
@@ -33,18 +36,10 @@ export const handler: Handlers<CellType> = {
       return new Response("Colour must be a string", { status: 400 });
     }
 
-    const grid: any = await kv.get(["grid"]);
-    
-    if (!grid.value) {
-      grid.value = await initialiseGrid();
-    }
-
-    grid.value[index].colour = colour;
-    await kv.set(["grid"], grid.value);
-
-    console.log(`Cell ${index} set to ${colour}`);
-
-    notifyClients(grid.value);
+    // add to queue
+    postQueue.push({ index, colour });
+    // don't want to await this
+    processPostQueue();
 
     return new Response("Colour set successfully", { status: 200 });
   },
@@ -64,4 +59,26 @@ async function initialiseGrid() {
   console.log("Initialised grid with default colours");
 
   return GRID;
+}
+
+async function processPostQueue() {
+  if (isProcessingQueue) return;
+  isProcessingQueue = true;
+
+  while (postQueue.length > 0) {
+    const { index, colour } = postQueue.shift() as CellType;
+
+    const grid: any = await kv.get(["grid"]);
+    
+    if (!grid.value) {
+      grid.value = await initialiseGrid();
+    }
+    grid.value[index].colour = colour;
+    await kv.set(["grid"], grid.value);
+
+    console.log(`Cell ${index} set to ${colour}`);
+    notifyClients(grid.value);
+  }
+
+  isProcessingQueue = false;
 }
