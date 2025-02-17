@@ -19,6 +19,7 @@ export function getColourFromDB(): Promise<string | null> {
 
       getRequest.onsuccess = () => {
         if (!getRequest.result) {
+          console.error("No colour found in IndexedDB, defaulting to black");
           resolve(BLACK);
         } else {
           resolve(getRequest.result);
@@ -53,7 +54,7 @@ export function setColourInDB(colour: string): Promise<void> {
       const db = event.target.result;
       const transaction = db.transaction(STORE, "readwrite");
       const store = transaction.objectStore(STORE);
-      store.put("colour", colour);
+      store.put(colour, "colour");
 
       transaction.oncomplete = () => {
         resolve();
