@@ -1,6 +1,8 @@
 # Pixel Paint
 
-This is a fun little website inspired by r/place that allows you to paint a set amount of pixels with users around the world!
+This is a fun little website inspired by r/place that allows you to paint pixels with users around the world!
+
+Find the deployment at <https://pixelpaint.deno.dev>
 
 ### Developer Usage
 
