@@ -5,6 +5,7 @@
 import * as $_404 from "./routes/_404.tsx";
 import * as $_app from "./routes/_app.tsx";
 import * as $api_updateGrid from "./routes/api/updateGrid.ts";
+import * as $api_websocket from "./routes/api/websocket.ts";
 import * as $index from "./routes/index.tsx";
 import * as $pixels from "./routes/pixels.tsx";
 import * as $Cell from "./islands/Cell.tsx";
@@ -17,6 +18,7 @@ const manifest = {
     "./routes/_404.tsx": $_404,
     "./routes/_app.tsx": $_app,
     "./routes/api/updateGrid.ts": $api_updateGrid,
+    "./routes/api/websocket.ts": $api_websocket,
     "./routes/index.tsx": $index,
     "./routes/pixels.tsx": $pixels,
   },

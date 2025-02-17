@@ -13,22 +13,13 @@ export default function Grid() {
   }
 
   function updateGrid() {
-    const url = `ws://${globalThis.location.hostname}:${UPDATE_PORT}`;
-    console.log("Connecting to WebSocket server at", url);
+    const url = `/api/websocket`;
     const ws = new WebSocket(url);
-
-    ws.onopen = () => {
-      console.log("WebSocket connection established!");
-    };
 
     ws.onmessage = (e) => {
       console.log("Received update!");
       const data = JSON.parse(e.data) as CellType[];
       setGrid(data);
-    };
-
-    ws.onclose = () => {
-      console.log("WebSocket connection closed!");
     };
 
     return () => {
