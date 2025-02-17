@@ -1,8 +1,24 @@
+import { useState, useEffect } from "preact/hooks";
 import { CellType } from "../global/types.ts";
 import { CELL_SIZE } from "../global/constants.ts";
 import { getColourFromDB } from "../global/utils.ts";
 
 export default function Cell({ colour, index }: CellType) {
+  const [isMouseDown, setIsMouseDown] = useState(false);
+  
+  useEffect(() => {
+    const handleMouseDown = () => setIsMouseDown(true);
+    const handleMouseUp = () => setIsMouseDown(false);
+
+    globalThis.addEventListener("mousedown", handleMouseDown);
+    globalThis.addEventListener("mouseup", handleMouseUp);
+    
+    return () => {
+      globalThis.removeEventListener("mousedown", handleMouseDown);
+      globalThis.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, []);
+  
   const handleClick = async () => {
     const newColour = await getColourFromDB();
     if (newColour) {
@@ -24,6 +40,12 @@ export default function Cell({ colour, index }: CellType) {
     }
   };
 
+  const handleMouseEnter = () => {
+    if (isMouseDown) {
+      handleClick();
+    }
+  };
+
   return (
     <button
       style={{
@@ -31,9 +53,8 @@ export default function Cell({ colour, index }: CellType) {
         width: `${CELL_SIZE}px`,
         height: `${CELL_SIZE}px`,
       }}
-      onClick={handleClick}
-      onFocus={handleClick}
-      onMouseOver={handleClick}
+      onMouseDown={handleClick}
+      onMouseEnter={handleMouseEnter}
     >
     </button>
   );
