@@ -1,4 +1,4 @@
-import { CELL_SIZE, GRID_WIDTH } from "../global/constants.ts";
+import { CELL_SIZE, GRID_WIDTH, UPDATE_PORT } from "../global/constants.ts";
 import { CellType } from "../global/types.ts";
 import Cell from "./Cell.tsx";
 import { useEffect, useState } from "preact/hooks";
@@ -7,14 +7,13 @@ export default function Grid() {
   const [grid, setGrid] = useState<CellType[] | null>(null);
 
   async function fetchGrid() {
-    console.log("Fetching grid!");
     const response = await fetch("/api/updateGrid");
     const newGrid = await response.json() as CellType[];
     setGrid(newGrid);
   }
 
   function updateGrid() {
-    const url = `ws://${globalThis.location.hostname}:8080`;
+    const url = `ws://${globalThis.location.hostname}:${UPDATE_PORT}`;
     console.log("Connecting to WebSocket server at", url);
     const ws = new WebSocket(url);
 
@@ -44,9 +43,9 @@ export default function Grid() {
     };
     initialiseGrid();
 
-    const unsubscribe = updateGrid();
+    const subscribe = updateGrid();
     return () => {
-      unsubscribe();
+      subscribe();
     };
   }, []);
 

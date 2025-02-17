@@ -2,8 +2,8 @@
 
 import { Handlers } from "$fresh/server.ts";
 import { CellType } from "../../global/types.ts";
-import { GRID, GRID_SIZE } from "../../global/constants.ts";
-import { WebSocketServer } from "ws";
+import { GRID, GRID_SIZE, UPDATE_PORT } from "../../global/constants.ts";
+import { WebSocketServer } from "npm:ws";
 
 // fix deno fresh build infinite hang
 let kv: any = null;
@@ -11,7 +11,7 @@ let wss: any = null;
 const isBuildMode = Deno.args.includes("build");
 if (!isBuildMode) {
   kv = await Deno.openKv();
-  wss = new WebSocketServer({ port: 8080 });
+  wss = new WebSocketServer({ port: UPDATE_PORT });
 }
 
 export const handler: Handlers<CellType> = {
@@ -65,7 +65,7 @@ export const handler: Handlers<CellType> = {
 
 async function initialiseGrid() {
   await kv.set(["grid"], GRID);
-  console.log("Initialized grid with default colours");
+  console.log("Initialised grid with default colours");
 
   return GRID;
 }
@@ -76,5 +76,4 @@ export function notifyClients(grid: CellType[]) {
       client.send(JSON.stringify(grid));
     }
   });
-  console.log("Notified clients of grid update");
 }

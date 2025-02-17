@@ -9,4 +9,4 @@ export const GRID = Array.from({ length: GRID_SIZE }, (_, index) => ({
   colour: "#FFFFFF",
 })) as CellType[];
 
-export const UPDATE_CHANNEL = "grid_updates";
+export const UPDATE_PORT = 8080;
