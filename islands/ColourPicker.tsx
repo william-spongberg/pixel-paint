@@ -1,8 +1,19 @@
-import { useState } from "preact/hooks";
-import { setColourInDB } from "../global/utils.ts";
+import { useState, useEffect } from "preact/hooks";
+import { setColourInDB, getColourFromDB } from "../global/utils.ts";
+import { BLACK } from "../global/constants.ts";
 
 export default function ColourPicker() {
-  const [colour, setColour] = useState("#000000");
+  const [colour, setColour] = useState(BLACK);
+
+  useEffect(() => {
+    const fetchColour = async () => {
+      const dbColour = await getColourFromDB();
+      if (dbColour) {
+        setColour(dbColour);
+      }
+    };
+    fetchColour();
+  }, []);
 
   const handleChange = async (event: Event) => {
     const target = event.target as HTMLInputElement;
@@ -15,7 +26,7 @@ export default function ColourPicker() {
     <>
       <input
         type="color"
-        class="size-20 bg-gray-800" /* same colour as element, loses border */
+        class="size-20 bg-gray-800"
         value={colour}
         onChange={handleChange}
       />
