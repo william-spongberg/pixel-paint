@@ -1,29 +1,5 @@
 {
-  "name": "colour-picker",
-  "version": "1.0.0",
-  "description": "This is a fun little website inspired by r/place that allows you to paint pixels with users around the world!",
-  "main": "index.js",
   "dependencies": {
-    "autoprefixer": "^10.4.17",
-    "cssnano": "^6.0.3",
-    "postcss": "^8.4.35",
-    "tailwindcss": "^3.4.1",
-    "ws": "^8.18.0"
-  },
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/william-spongberg/pixel-paint.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/william-spongberg/pixel-paint/issues"
-  },
-  "homepage": "https://github.com/william-spongberg/pixel-paint#readme"
+    "ws": "8.18.0"
+  }
 }
