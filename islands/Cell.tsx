@@ -5,20 +5,22 @@ import { getColourFromDB } from "../global/utils.ts";
 export default function Cell({ colour, index }: CellType) {
   const handleClick = async () => {
     const newColour = await getColourFromDB();
-
-    try {
-      await fetch("/api/updateGrid", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          index,
-          colour: newColour,
-        }),
-      });
-    } catch (error) {
-      console.error("Error:", error);
+    if (newColour) {
+      colour = newColour;
+      try {
+        await fetch("/api/updateGrid", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            index,
+            colour,
+          }),
+        });
+      } catch (error) {
+        console.error("Error:", error);
+      }
     }
   };
 
@@ -30,6 +32,8 @@ export default function Cell({ colour, index }: CellType) {
         height: `${CELL_SIZE}px`,
       }}
       onClick={handleClick}
+      onFocus={handleClick}
+      onMouseOver={handleClick}
     >
     </button>
   );
