@@ -11,3 +11,6 @@ export const GRID = Array.from({ length: GRID_SIZE }, (_, index) => ({
   index,
   colour: WHITE,
 })) as CellType[];
+
+export const DATABASE = "pixelDatabase";
+export const STORE = "pixelStore";

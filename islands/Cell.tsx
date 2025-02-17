@@ -1,10 +1,10 @@
 import { CellType } from "../global/types.ts";
 import { CELL_SIZE } from "../global/constants.ts";
+import { getColourFromDB } from "../global/utils.ts";
 
 export default function Cell({ colour, index }: CellType) {
   const handleClick = async () => {
-    const response = await fetch("/api/updateColour");
-    const newColour = await response.json();
+    const newColour = await getColourFromDB();
 
     try {
       await fetch("/api/updateGrid", {

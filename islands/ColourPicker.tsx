@@ -1,24 +1,14 @@
 import { useState } from "preact/hooks";
+import { setColourInDB } from "../global/utils.ts";
 
 export default function ColourPicker() {
-  const [color, setColor] = useState("#000000");
+  const [colour, setColour] = useState("#000000");
 
   const handleChange = async (event: Event) => {
     const target = event.target as HTMLInputElement;
     const newColor = target.value;
-    setColor(newColor);
-
-    try {
-      await fetch("/api/updateColour", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ colour: newColor }),
-      });
-    } catch (error) {
-      console.error("Error:", error);
-    }
+    setColour(newColor);
+    await setColourInDB(newColor);
   };
 
   return (
@@ -26,7 +16,7 @@ export default function ColourPicker() {
       <input
         type="color"
         class="size-20 bg-gray-800" /* same colour as element, loses border */
-        value={color}
+        value={colour}
         onChange={handleChange}
       />
     </>
