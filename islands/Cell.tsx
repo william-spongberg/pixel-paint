@@ -3,18 +3,23 @@ import { CELL_SIZE } from "../global/constants.ts";
 
 export default function Cell({ colour, index }: CellType) {
   const handleClick = async () => {
-    const newColour = localStorage.getItem('selectedColor') || colour;
+    const response = await fetch("/api/updateColour");
+    const newColour = await response.json();
 
-    await fetch('/api/updateGrid', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        index,
-        colour: newColour,
-      }),
-    });
+    try {
+      await fetch("/api/updateGrid", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          index,
+          colour: newColour,
+        }),
+      });
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   return (

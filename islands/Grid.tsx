@@ -1,4 +1,4 @@
-import { CELL_SIZE, GRID_WIDTH, UPDATE_PORT } from "../global/constants.ts";
+import { CELL_SIZE, GRID_WIDTH } from "../global/constants.ts";
 import { CellType } from "../global/types.ts";
 import Cell from "./Cell.tsx";
 import { useEffect, useState } from "preact/hooks";
@@ -49,7 +49,7 @@ export default function Grid() {
         width: "100%",
       }}
     >
-      {grid && grid.map((cell) => <Cell {...cell} />)}
+      {grid?.map((cell) => <Cell {...cell} />)}
     </div>
   );
 }

@@ -1,14 +1,24 @@
 import { useState } from "preact/hooks";
 
 export default function ColourPicker() {
-  const [color, setColor] = useState('#000000');
-  localStorage.setItem('selectedColor', color);
+  const [color, setColor] = useState("#000000");
 
-  const handleChange = (event: Event) => {
+  const handleChange = async (event: Event) => {
     const target = event.target as HTMLInputElement;
     const newColor = target.value;
     setColor(newColor);
-    localStorage.setItem('selectedColor', newColor);
+
+    try {
+      await fetch("/api/updateColour", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ colour: newColor }),
+      });
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   return (
