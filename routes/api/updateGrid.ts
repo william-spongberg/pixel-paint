@@ -69,7 +69,7 @@ async function processPostQueue() {
     const { index, colour } = postQueue.shift() as CellType;
 
     const grid: any = await kv.get(["grid"]);
-    
+
     if (!grid.value) {
       grid.value = await initialiseGrid();
     }

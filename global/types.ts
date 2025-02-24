@@ -1,7 +1,7 @@
 import { ComponentChildren } from "preact";
 
 export interface ChildrenProps {
-  children: ComponentChildren
+  children: ComponentChildren;
 }
 
 export interface ColourProps {

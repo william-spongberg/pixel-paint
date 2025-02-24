@@ -7,7 +7,6 @@ import * as $_app from "./routes/_app.tsx";
 import * as $api_updateGrid from "./routes/api/updateGrid.ts";
 import * as $api_websocket from "./routes/api/websocket.ts";
 import * as $index from "./routes/index.tsx";
-import * as $pixels from "./routes/pixels.tsx";
 import * as $Cell from "./islands/Cell.tsx";
 import * as $ColourPicker from "./islands/ColourPicker.tsx";
 import * as $Grid from "./islands/Grid.tsx";
@@ -20,7 +19,6 @@ const manifest = {
     "./routes/api/updateGrid.ts": $api_updateGrid,
     "./routes/api/websocket.ts": $api_websocket,
     "./routes/index.tsx": $index,
-    "./routes/pixels.tsx": $pixels,
   },
   islands: {
     "./islands/Cell.tsx": $Cell,
