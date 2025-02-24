@@ -10,6 +10,12 @@ if (!isBuildMode) {
   kv = await Deno.openKv();
 }
 
+// batching
+const BATCH_SIZE = 10;
+const BATCH_DELAY_MS = 100;
+let batchTimer: number | null = null;
+
+// post queue
 const postQueue: CellType[] = [];
 let isProcessingQueue = false;
 
@@ -38,8 +44,21 @@ export const handler: Handlers<CellType> = {
 
     // add to queue
     postQueue.push({ index, colour });
-    // don't want to await this
-    processPostQueue();
+
+    // if batch size reached, process immediately.
+    if (postQueue.length >= BATCH_SIZE && !isProcessingQueue) {
+      if (batchTimer) {
+        clearTimeout(batchTimer);
+        batchTimer = null;
+      }
+      processPostQueue();
+    } else if (!batchTimer) {
+      // otherwise, schedule processing after short delay
+      batchTimer = setTimeout(() => {
+        processPostQueue();
+        batchTimer = null;
+      }, BATCH_DELAY_MS);
+    }
 
     return new Response("Colour set successfully", { status: 200 });
   },
@@ -65,20 +84,25 @@ async function processPostQueue() {
   if (isProcessingQueue) return;
   isProcessingQueue = true;
 
-  while (postQueue.length > 0) {
-    const { index, colour } = postQueue.shift() as CellType;
-
-    const grid: any = await kv.get(["grid"]);
-    
-    if (!grid.value) {
-      grid.value = await initialiseGrid();
-    }
-    grid.value[index].colour = colour;
-    await kv.set(["grid"], grid.value);
-
-    console.log(`Cell ${index} set to ${colour}`);
-    notifyClients(grid.value);
+  // empty queue into batch
+  const batch: CellType[] = [];
+  while (postQueue.length) {
+    batch.push(postQueue.shift() as CellType);
   }
+
+  const grid: any = await kv.get(["grid"]);
+  if (!grid.value) {
+    grid.value = await initialiseGrid();
+  }
+
+  // only one kv.get & kv.set per batch
+  batch.forEach(({ index, colour }) => {
+    grid.value[index].colour = colour;
+    console.log(`Cell ${index} set to ${colour}`);
+  });
+
+  await kv.set(["grid"], grid.value);
+  notifyClients(grid.value);
 
   isProcessingQueue = false;
 }
