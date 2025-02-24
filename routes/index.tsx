@@ -10,7 +10,7 @@ export default function Pixels() {
       <Head>
         <title>Time to Paint!</title>
       </Head>
-      <Layout.Background>
+      <Layout.Background disableFooter>
         <Layout.Grid>
           <Layout.Element size="max-w-screen-2xl">
             <Text.Heading>
