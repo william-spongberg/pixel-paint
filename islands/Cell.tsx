@@ -1,4 +1,4 @@
-import { useState, useEffect } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 import { CellType } from "../global/types.ts";
 import { CELL_SIZE } from "../global/constants.ts";
 import { getColourFromDB } from "../global/utils.ts";
@@ -6,20 +6,20 @@ import { getColourFromDB } from "../global/utils.ts";
 export default function Cell({ colour: initialColour, index }: CellType) {
   const [colour, setColour] = useState(initialColour);
   const [isMouseDown, setIsMouseDown] = useState(false);
-  
+
   useEffect(() => {
     const handleMouseDown = () => setIsMouseDown(true);
     const handleMouseUp = () => setIsMouseDown(false);
 
     globalThis.addEventListener("mousedown", handleMouseDown);
     globalThis.addEventListener("mouseup", handleMouseUp);
-    
+
     return () => {
       globalThis.removeEventListener("mousedown", handleMouseDown);
       globalThis.removeEventListener("mouseup", handleMouseUp);
     };
   }, []);
-  
+
   const handleClick = async () => {
     const newColour = await getColourFromDB();
     if (newColour) {

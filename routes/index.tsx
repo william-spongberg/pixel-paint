@@ -1,24 +1,36 @@
-import Button from "../components/Button.tsx";
+import { Head } from "$fresh/runtime.ts";
 import * as Layout from "../components/Layout.tsx";
 import * as Text from "../components/Text.tsx";
-import { Head } from "$fresh/runtime.ts";
+import Grid from "../islands/Grid.tsx";
+import ColourPicker from "../islands/ColourPicker.tsx";
 
-export default function Home() {
+export default function Pixels() {
   return (
     <>
       <Head>
-        <title>Pixel Painting</title>
+        <title>Time to Paint!</title>
       </Head>
+      <Layout.Background disableFooter>
+        <Layout.Grid>
+          <Layout.Element size="max-w-screen-2xl">
+            <Text.Heading>
+              Time to Paint!
+            </Text.Heading>
+            <Text.Paragraph>
+              Click on a colour, then click on a pixel to paint it
+            </Text.Paragraph>
+            <br />
+            <Grid />
+          </Layout.Element>
 
-      <Layout.Background disableFooter={true}>
-        <Layout.Element>
-          <Text.Title>
-            Pixel Painting
-          </Text.Title>
-          <br />
-          <Button href="/pixels" text="Start">
-          </Button>
-        </Layout.Element>
+          <Layout.Element size="max-w-sm">
+            <Text.Paragraph>
+              Pick a colour
+            </Text.Paragraph>
+            <br />
+            <ColourPicker />
+          </Layout.Element>
+        </Layout.Grid>
       </Layout.Background>
     </>
   );

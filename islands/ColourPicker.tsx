@@ -1,5 +1,5 @@
-import { useState, useEffect } from "preact/hooks";
-import { setColourInDB, getColourFromDB } from "../global/utils.ts";
+import { useEffect, useState } from "preact/hooks";
+import { getColourFromDB, setColourInDB } from "../global/utils.ts";
 import { BLACK } from "../global/constants.ts";
 
 export default function ColourPicker() {

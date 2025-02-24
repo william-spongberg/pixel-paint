@@ -32,5 +32,3 @@ jobs:
           project: "pixelpaint"
           entrypoint: "main.ts"
           root: "."
-          
-          
