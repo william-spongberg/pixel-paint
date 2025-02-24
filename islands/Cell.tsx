@@ -3,7 +3,8 @@ import { CellType } from "../global/types.ts";
 import { CELL_SIZE } from "../global/constants.ts";
 import { getColourFromDB } from "../global/utils.ts";
 
-export default function Cell({ colour, index }: CellType) {
+export default function Cell({ colour: initialColour, index }: CellType) {
+  const [colour, setColour] = useState(initialColour);
   const [isMouseDown, setIsMouseDown] = useState(false);
   
   useEffect(() => {
@@ -22,7 +23,7 @@ export default function Cell({ colour, index }: CellType) {
   const handleClick = async () => {
     const newColour = await getColourFromDB();
     if (newColour) {
-      colour = newColour;
+      setColour(newColour);
       try {
         await fetch("/api/updateGrid", {
           method: "POST",
@@ -31,7 +32,7 @@ export default function Cell({ colour, index }: CellType) {
           },
           body: JSON.stringify({
             index,
-            colour,
+            colour: newColour,
           }),
         });
       } catch (error) {
@@ -52,6 +53,7 @@ export default function Cell({ colour, index }: CellType) {
         backgroundColor: colour,
         width: `${CELL_SIZE}px`,
         height: `${CELL_SIZE}px`,
+        outline: "none",
       }}
       onMouseDown={handleClick}
       onMouseEnter={handleMouseEnter}
