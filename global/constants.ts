@@ -3,7 +3,7 @@ import { CellType } from "./types.ts";
 export const WHITE = "#FFFFFF";
 export const BLACK = "#000000";
 
-export const CELL_SIZE = 15;
+export const CELL_SIZE = 12;
 export const GRID_WIDTH = 32;
 export const GRID_HEIGHT = 32;
 export const GRID_SIZE = GRID_WIDTH * GRID_HEIGHT;
