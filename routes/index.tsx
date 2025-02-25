@@ -17,7 +17,7 @@ export default function Pixels() {
               Time to Paint!
             </Text.Heading>
             <Text.Paragraph>
-              Click on a colour, then click on a pixel to paint it
+              Pick a colour, then click/drag to paint
             </Text.Paragraph>
             <br />
             <Grid />
