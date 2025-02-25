@@ -43,7 +43,7 @@ export function Element(
 ) {
   return (
     <div
-      class={`px-8 py-8 mx-auto my-auto ${colour} rounded-2xl w-full ${size}`}
+      class={`sm:px-8 px-0 sm:py-8 py-2 mx-auto my-auto ${colour} rounded-2xl w-full ${size}`}
     >
       <Center>
         <Text.Title>{title}</Text.Title>
@@ -65,7 +65,7 @@ export function Grid({ children }: ChildrenProps) {
 
 export function Center({ children }: ChildrenProps) {
   return (
-    <div class="flex flex-col items-center px-4 py-4 sm:px-8">
+    <div class="flex flex-col items-center">
       {children}
     </div>
   );
