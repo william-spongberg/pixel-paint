@@ -53,7 +53,6 @@ export default function Cell({ colour: initialColour, index }: CellType) {
         backgroundColor: colour,
         width: `${CELL_SIZE}px`,
         height: `${CELL_SIZE}px`,
-        outline: "none",
       }}
       onMouseDown={handleClick}
       onMouseEnter={handleMouseEnter}

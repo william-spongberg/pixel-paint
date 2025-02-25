@@ -45,7 +45,6 @@ export default function Grid() {
       style={{
         display: "grid",
         gridTemplateColumns: `repeat(${GRID_WIDTH}, ${CELL_SIZE}px)`,
-        gap: "1px",
         width: "100%",
       }}
     >
