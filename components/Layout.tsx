@@ -55,11 +55,9 @@ export function Element(
   );
 }
 
-// TODO: add small, medium, large grid options (change depending on screen size, up to user of function)
 export function Grid({ children }: ChildrenProps) {
   return (
-    // md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5
-    <div class="grid sm:grid-cols-1 md:grid-cols-2 gap-4 mt-4 mb-4">
+    <div class="grid sm:grid-cols-1 lg:grid-cols-2 gap-4 mt-4 mb-4">
       {children}
     </div>
   );
