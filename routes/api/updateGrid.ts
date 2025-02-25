@@ -16,8 +16,8 @@ const BATCH_DELAY_MS = 100;
 let batchTimer: number | null = null;
 
 // post queue
-const postQueue: CellType[] = [];
-let isProcessingQueue = false;
+const cellUpdateQueue: CellType[] = [];
+let isProcessing = false;
 
 export const handler: Handlers<CellType> = {
   async GET(_req, _ctx) {
@@ -42,11 +42,11 @@ export const handler: Handlers<CellType> = {
       return new Response("Colour must be a string", { status: 400 });
     }
 
-    // add to queue
-    postQueue.push({ index, colour });
+    // add to queue, write current timestamp (note timestamp can still overlap)
+    cellUpdateQueue.push({ index, colour, timestamp:Date.now()});
 
     // if batch size reached, process immediately.
-    if (postQueue.length >= BATCH_SIZE && !isProcessingQueue) {
+    if (cellUpdateQueue.length >= BATCH_SIZE && !isProcessing) {
       if (batchTimer) {
         clearTimeout(batchTimer);
         batchTimer = null;
@@ -69,11 +69,12 @@ export const handler: Handlers<CellType> = {
 
     notifyClients(GRID);
 
-    return new Response("Grid deleted", { status: 200 });
+    return new Response("Grid deleted successfully", { status: 200 });
   },
 };
 
 async function initialiseGrid() {
+  // set kv to default GRID array (all white)
   await kv.set(["grid"], GRID);
   console.log("Initialised grid with default colours");
 
@@ -81,28 +82,30 @@ async function initialiseGrid() {
 }
 
 async function processPostQueue() {
-  if (isProcessingQueue) return;
-  isProcessingQueue = true;
+  if (isProcessing) return;
+  isProcessing = true;
 
-  // empty queue into batch
+  // empty current queue into batch
   const batch: CellType[] = [];
-  while (postQueue.length) {
-    batch.push(postQueue.shift() as CellType);
+  while (cellUpdateQueue.length) {
+    batch.push(cellUpdateQueue.shift() as CellType);
   }
 
+  // grab grid from kv
   const grid: any = await kv.get(["grid"]);
   if (!grid.value) {
     grid.value = await initialiseGrid();
   }
 
-  // only one kv.get & kv.set per batch
+  // update kv with new cell changes
   batch.forEach(({ index, colour }) => {
     grid.value[index].colour = colour;
     console.log(`Cell ${index} set to ${colour}`);
   });
-
   await kv.set(["grid"], grid.value);
-  notifyClients(grid.value);
 
-  isProcessingQueue = false;
+  // notify clients of all altered cells
+  notifyClients(batch);
+
+  isProcessing = false;
 }

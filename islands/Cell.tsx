@@ -36,7 +36,7 @@ export default function Cell({ colour: initialColour, index }: CellType) {
           }),
         });
       } catch (error) {
-        console.error("Error:", error);
+        console.error("Error posting updated cell:", error);
       }
     }
   };
@@ -49,6 +49,7 @@ export default function Cell({ colour: initialColour, index }: CellType) {
 
   return (
     <button
+      type = "button"
       style={{
         backgroundColor: colour,
         width: `${CELL_SIZE}px`,

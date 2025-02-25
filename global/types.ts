@@ -11,4 +11,5 @@ export interface ColourProps {
 export interface CellType {
   colour: string;
   index: number;
+  timestamp?: number;
 }
