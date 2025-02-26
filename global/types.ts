@@ -4,11 +4,7 @@ export interface ChildrenProps {
   children: ComponentChildren;
 }
 
-export interface ColourProps {
-  colour: string;
-}
-
-export interface CellType {
+export interface Pixel {
   colour: string;
   index: number;
   timestamp?: number;

@@ -7,9 +7,9 @@ import * as $_app from "./routes/_app.tsx";
 import * as $api_updateGrid from "./routes/api/updateGrid.ts";
 import * as $api_websocket from "./routes/api/websocket.ts";
 import * as $index from "./routes/index.tsx";
-import * as $Cell from "./islands/Cell.tsx";
+import * as $Cell from "./islands/PixelCell.tsx";
 import * as $ColourPicker from "./islands/ColourPicker.tsx";
-import * as $Grid from "./islands/Grid.tsx";
+import * as $Grid from "./islands/PixelGrid.tsx";
 import type { Manifest } from "$fresh/server.ts";
 
 const manifest = {

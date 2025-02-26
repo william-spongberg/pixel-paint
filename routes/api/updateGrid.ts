@@ -1,5 +1,5 @@
 import { Handlers } from "$fresh/server.ts";
-import { CellType } from "../../global/types.ts";
+import { Pixel } from "../../global/types.ts";
 import { GRID, GRID_SIZE } from "../../global/constants.ts";
 import { notifyClients } from "./websocket.ts";
 
@@ -16,14 +16,14 @@ const BATCH_DELAY_MS = 100;
 let batchTimer: number | null = null;
 
 // post queue
-const cellUpdateQueue: CellType[] = [];
+const pixelQueue: Pixel[] = [];
 let isProcessing = false;
 
-export const handler: Handlers<CellType> = {
+export const handler: Handlers<Pixel> = {
   async GET(_req, _ctx) {
     const grid = await kv.get(["grid"]);
 
-    if (!grid.value || (grid.value as CellType[]).length !== GRID_SIZE) {
+    if (!grid.value || (grid.value as Pixel[]).length !== GRID_SIZE) {
       const initialGrid = await initialiseGrid();
       return new Response(JSON.stringify(initialGrid), { status: 200 });
     }
@@ -43,19 +43,19 @@ export const handler: Handlers<CellType> = {
     }
 
     // add to queue, write current timestamp (note timestamp can still overlap)
-    cellUpdateQueue.push({ index, colour, timestamp:Date.now()});
+    pixelQueue.push({ index, colour, timestamp:Date.now()});
 
     // if batch size reached, process immediately.
-    if (cellUpdateQueue.length >= BATCH_SIZE && !isProcessing) {
+    if (pixelQueue.length >= BATCH_SIZE && !isProcessing) {
       if (batchTimer) {
         clearTimeout(batchTimer);
         batchTimer = null;
       }
-      processPostQueue();
+      processPixelQueue();
     } else if (!batchTimer) {
       // otherwise, schedule processing after short delay
       batchTimer = setTimeout(() => {
-        processPostQueue();
+        processPixelQueue();
         batchTimer = null;
       }, BATCH_DELAY_MS);
     }
@@ -81,14 +81,14 @@ async function initialiseGrid() {
   return GRID;
 }
 
-async function processPostQueue() {
+async function processPixelQueue() {
   if (isProcessing) return;
   isProcessing = true;
 
   // empty current queue into batch
-  const batch: CellType[] = [];
-  while (cellUpdateQueue.length) {
-    batch.push(cellUpdateQueue.shift() as CellType);
+  const batch: Pixel[] = [];
+  while (pixelQueue.length) {
+    batch.push(pixelQueue.shift() as Pixel);
   }
 
   // grab grid from kv
@@ -97,14 +97,14 @@ async function processPostQueue() {
     grid.value = await initialiseGrid();
   }
 
-  // update kv with new cell changes
+  // update kv with new pixel changes
   batch.forEach(({ index, colour }) => {
     grid.value[index].colour = colour;
-    console.log(`Cell ${index} set to ${colour}`);
+    console.log(`Pixel ${index} set to ${colour}`);
   });
   await kv.set(["grid"], grid.value);
 
-  // notify clients of all altered cells
+  // notify clients of all altered pixels
   notifyClients(batch);
 
   isProcessing = false;

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "preact/hooks";
-import { CellType } from "../global/types.ts";
-import { CELL_SIZE } from "../global/constants.ts";
+import { Pixel } from "../global/types.ts";
+import { PIXEL_SIZE } from "../global/constants.ts";
 import { getColourFromDB } from "../global/utils.ts";
 
-export default function Cell({ colour: initialColour, index }: CellType) {
+export default function PixelCell({ colour: initialColour, index }: Pixel) {
   const [colour, setColour] = useState(initialColour);
   const [isMouseDown, setIsMouseDown] = useState(false);
 
@@ -36,7 +36,7 @@ export default function Cell({ colour: initialColour, index }: CellType) {
           }),
         });
       } catch (error) {
-        console.error("Error posting updated cell:", error);
+        console.error("Error posting updated pixel:", error);
       }
     }
   };
@@ -52,8 +52,8 @@ export default function Cell({ colour: initialColour, index }: CellType) {
       type = "button"
       style={{
         backgroundColor: colour,
-        width: `${CELL_SIZE}px`,
-        height: `${CELL_SIZE}px`,
+        width: `${PIXEL_SIZE}px`,
+        height: `${PIXEL_SIZE}px`,
       }}
       onMouseDown={handleClick}
       onMouseEnter={handleMouseEnter}

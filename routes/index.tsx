@@ -1,7 +1,7 @@
 import { Head } from "$fresh/runtime.ts";
 import * as Layout from "../components/Layout.tsx";
 import * as Text from "../components/Text.tsx";
-import Grid from "../islands/Grid.tsx";
+import PixelGrid from "../islands/PixelGrid.tsx";
 import ColourPicker from "../islands/ColourPicker.tsx";
 
 export default function Pixels() {
@@ -20,7 +20,7 @@ export default function Pixels() {
               Pick a colour, then click/drag to paint
             </Text.Paragraph>
             <br />
-            <Grid />
+            <PixelGrid />
           </Layout.Element>
 
           <Layout.Element size="max-w-sm">
