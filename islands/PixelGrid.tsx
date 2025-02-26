@@ -1,10 +1,10 @@
-import { PIXEL_SIZE, GRID_LENGTH } from "../global/constants.ts";
+import { PIXEL_SIZE, GRID_LENGTH, GRID } from "../global/constants.ts";
 import { Pixel } from "../global/types.ts";
 import PixelCell from "./PixelCell.tsx";
 import { useEffect, useState } from "preact/hooks";
 
 export default function PixelGrid() {
-  const [grid, setGrid] = useState<Pixel[]>([]);
+  const [grid, setGrid] = useState<Pixel[]>(GRID);
 
   async function initGrid() {
     // fetch grid from kv

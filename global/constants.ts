@@ -10,6 +10,7 @@ export const GRID_SIZE = GRID_LENGTH * GRID_HEIGHT;
 export const GRID = Array.from({ length: GRID_SIZE }, (_, index) => ({
   index,
   colour: WHITE,
+  timestamp: 0
 })) as Pixel[];
 
 export const DATABASE = "pixelDatabase";
