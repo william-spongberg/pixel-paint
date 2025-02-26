@@ -54,8 +54,9 @@ export default function PixelGrid() {
   }, [grid]);
 
   return (
+    <div class="px-2 py-4">
     <div
-      class="sm:scale-100 scale-75"
+      class="scale-75 md:scale-90 lg:scale-100 xl:scale-125"
       style={{
         display: "grid",
         gridTemplateColumns: `repeat(${GRID_LENGTH}, ${PIXEL_SIZE}px)`,
@@ -66,6 +67,7 @@ export default function PixelGrid() {
       {grid?.map((pixel) => (
         <PixelCell key={`pixel-${pixel.index}-${pixel.timestamp}`} {...pixel} />
       ))}
+    </div>
     </div>
   );
 }

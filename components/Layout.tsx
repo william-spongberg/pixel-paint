@@ -56,7 +56,7 @@ export function Element({
 }: ElementProps) {
   return (
     <div
-      class={`sm:px-8 px-0 sm:py-8 py-2 mx-auto my-auto ${colour} rounded-2xl w-full ${size}`}
+      class={`lg:px-16 sm:px-8 px-0 lg:py-16 sm:py-8 py-2 mx-auto my-auto ${colour} rounded-2xl w-full ${size}`}
     >
       <Center>
         <Text.Title textColour={textColour}>{title}</Text.Title>
