@@ -1,27 +1,40 @@
 import { ComponentChildren } from "preact";
-import * as Text from "./Text.tsx";
-import { ChildrenProps } from "../global/types.ts";
-import Button from "./Button.tsx";
+import * as Text from "../components/Text.tsx";
+import Button from "../components/Button.tsx";
+import * as Icons from "../components/Icons.tsx";
 
-const SCREEN_COLOUR = "bg-black";
+// colours
+const BACKGROUND_COLOUR = "bg-black";
+const HEADER_COLOUR = "bg-black";
+const FOOTER_COLOUR = "bg-black";
 const ELEMENT_COLOUR = "bg-gray-800";
+const BUTTON_COLOUR = "bg-[#F0EBD8]";
+const BUTTON_HOVER_COLOUR = "hover:bg-[#F0EBD0]";
+const TEXT_COLOUR = "text-white";
+
+// sizes
 const ELEMENT_SIZE = "max-w-screen-md";
 
-interface BackgroundProps {
-  disableFooter?: boolean;
+interface ChildrenProps {
+  children: ComponentChildren;
+}
+
+interface PageProps {
   colour?: string;
   children: ComponentChildren;
 }
 
-export function Background(
-  { colour = SCREEN_COLOUR, disableFooter = false, children }: BackgroundProps,
-) {
+export function Page({
+  colour = BACKGROUND_COLOUR,
+  children,
+}: PageProps) {
   return (
     <div class={`flex flex-col min-h-screen ${colour}`}>
-      <div class="flex-grow flex items-center justify-center mb-9 px-4 sm:px-8 pt-8 pb-8">
+      <div
+        class={`flex-grow flex items-center justify-center mb-9 px-4 sm:px-8 pt-8 pb-8`}
+      >
         {children}
       </div>
-      <Footer disableFooter={disableFooter} />
     </div>
   );
 }
@@ -30,23 +43,23 @@ interface ElementProps {
   children: ComponentChildren;
   title?: string;
   colour?: string;
+  textColour?: string;
   size?: string;
 }
 
-export function Element(
-  {
-    title = "",
-    colour = ELEMENT_COLOUR,
-    size = ELEMENT_SIZE,
-    children,
-  }: ElementProps,
-) {
+export function Element({
+  title = "",
+  colour = ELEMENT_COLOUR,
+  textColour = TEXT_COLOUR,
+  size = ELEMENT_SIZE,
+  children,
+}: ElementProps) {
   return (
     <div
       class={`sm:px-8 px-0 sm:py-8 py-2 mx-auto my-auto ${colour} rounded-2xl w-full ${size}`}
     >
       <Center>
-        <Text.Title>{title}</Text.Title>
+        <Text.Title textColour={textColour}>{title}</Text.Title>
         <br />
         {children}
         <br />
@@ -55,52 +68,105 @@ export function Element(
   );
 }
 
-export function Grid({ children }: ChildrenProps) {
+interface GridProps {
+  customGridCols?: string;
+  children: ComponentChildren;
+}
+
+export function Grid({ children }: GridProps) {
   return (
-    <div class="grid sm:grid-cols-1 lg:grid-cols-2 gap-4 mt-4 mb-4">
+    <div
+      class={`grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2`}
+    >
       {children}
     </div>
   );
 }
 
 export function Center({ children }: ChildrenProps) {
+  return <div class="flex flex-col justify-center items-center">{children}
+  </div>;
+}
+
+interface HeaderProps {
+  title?: string;
+  colour?: string;
+  textColour?: string;
+}
+
+export function Header({
+  title = "",
+  colour = HEADER_COLOUR,
+  textColour = TEXT_COLOUR,
+}: HeaderProps) {
   return (
-    <div class="flex flex-col items-center">
-      {children}
-    </div>
+    <>
+      <header
+        className={`flex items-center justify-start ${colour} pb-2 px-4`}
+      >
+        {title && (
+          <Text.Title textColour={textColour}>
+            {title}
+          </Text.Title>
+        )}
+        <div class="ml-auto gap-2 flex">
+          <Button href="mailto:william@spongberg.dev">
+            <Icons.Email />
+          </Button>
+          <Button href="https://www.linkedin.com/in/william-spongberg/">
+            <Icons.LinkedIn />
+          </Button>
+          <Button href="https://github.com/william-spongberg">
+            <Icons.GitHub />
+          </Button>
+        </div>
+      </header>
+    </>
   );
 }
 
 interface FooterProps {
-  disableFooter?: boolean;
+  colour?: string;
+  textColour?: string;
+  author?: string;
+  isBeta?: boolean;
 }
 
-export function Footer({ disableFooter = false }: FooterProps) {
+export function Footer({
+  colour = FOOTER_COLOUR,
+  textColour = "text-gray-400",
+  author = "",
+  isBeta = false,
+}: FooterProps) {
   return (
     <>
-      <footer class="flex flex-col items-center w-auto bg-gray-900 text-white">
-        {!disableFooter && (
-          <Button
-            href="/"
-            text="Go back Home"
-          />
-        )}
-        <div class="flex flex-col md:flex-row justify-center items-center h-auto md:h-16 p-4 md:p-2 pb-16 md:pb-2">
-          <p class="text-yellow-500 mb-2 md:mb-0">This website is in beta.</p>
-          <p class="hidden md:block mx-2">|</p>
-          <p class="mb-2 md:mb-0">
-            Made with ❤️ by{" "}
-            <a
-              href="https://github.com/william-spongberg"
-              class="text-blue-500 hover:underline"
-            >
-              William Spongberg
-            </a>
-          </p>
-          <p class="hidden md:block mx-2">|</p>
+      <footer
+        class={`flex flex-col items-center w-auto ${colour} ${textColour}`}
+      >
+        <div class="flex flex-col justify-center items-center sm:p-4 md:p-2 pb-16 md:pb-2">
+          {isBeta
+            ? (
+              <>
+                <p class="text-[#748CAB] mb-0">
+                  This website is in beta.
+                </p>
+                <div class="hidden md:block">&nbsp;</div>
+              </>
+            )
+            : null}
           <p>
-            &copy; William Spongberg{" "}
-            {new Date().getFullYear()}. All rights reserved.
+            <div class="gap-2 pb-2 flex">
+              <Button href="mailto:william@spongberg.dev">
+                <Icons.Email />
+              </Button>
+              <Button href="https://www.linkedin.com/in/william-spongberg/">
+                <Icons.LinkedIn />
+              </Button>
+              <Button href="https://github.com/william-spongberg">
+                <Icons.GitHub />
+              </Button>
+            </div>
+            &copy; {author} {new Date().getFullYear()}. All rights reserved.
           </p>
         </div>
       </footer>

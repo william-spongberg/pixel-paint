@@ -10,7 +10,7 @@ export default function Pixels() {
       <Head>
         <title>Time to Paint!</title>
       </Head>
-      <Layout.Background disableFooter>
+      <Layout.Page>
         <Layout.Grid>
           <Layout.Element size="max-w-screen-2xl">
             <Text.Heading>
@@ -31,7 +31,7 @@ export default function Pixels() {
             <ColourPicker />
           </Layout.Element>
         </Layout.Grid>
-      </Layout.Background>
+      </Layout.Page>
     </>
   );
 }

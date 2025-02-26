@@ -7,9 +7,9 @@ import * as $_app from "./routes/_app.tsx";
 import * as $api_updateGrid from "./routes/api/updateGrid.ts";
 import * as $api_websocket from "./routes/api/websocket.ts";
 import * as $index from "./routes/index.tsx";
-import * as $Cell from "./islands/PixelCell.tsx";
 import * as $ColourPicker from "./islands/ColourPicker.tsx";
-import * as $Grid from "./islands/PixelGrid.tsx";
+import * as $PixelCell from "./islands/PixelCell.tsx";
+import * as $PixelGrid from "./islands/PixelGrid.tsx";
 import type { Manifest } from "$fresh/server.ts";
 
 const manifest = {
@@ -21,9 +21,9 @@ const manifest = {
     "./routes/index.tsx": $index,
   },
   islands: {
-    "./islands/Cell.tsx": $Cell,
     "./islands/ColourPicker.tsx": $ColourPicker,
-    "./islands/Grid.tsx": $Grid,
+    "./islands/PixelCell.tsx": $PixelCell,
+    "./islands/PixelGrid.tsx": $PixelGrid,
   },
   baseUrl: import.meta.url,
 } satisfies Manifest;
