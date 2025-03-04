@@ -19,6 +19,11 @@ let batchTimer: number | null = null;
 const pixelQueue: Pixel[] = [];
 let isProcessing = false;
 
+// tracking metrics
+let totalBatches = 0;
+let totalProcessedPixels = 0;
+let totalProcessingDelayMS = 0;
+
 export const handler: Handlers<Pixel> = {
   async GET(_req, _ctx) {
     const grid = await kv.get(["grid"]);
@@ -91,6 +96,10 @@ async function processPixelQueue() {
     batch.push(pixelQueue.shift() as Pixel);
   }
 
+  // get current time for metrics
+  const now = Date.now();
+  let batchDelayMs = 0;
+
   // grab grid from kv
   const grid: any = await kv.get(["grid"]);
   if (!grid.value) {
@@ -98,11 +107,26 @@ async function processPixelQueue() {
   }
 
   // update kv with new pixel changes
-  batch.forEach(({ index, colour }) => {
+  batch.forEach(({ index, colour, timestamp }) => {
     grid.value[index].colour = colour;
     console.log(`Pixel ${index} set to ${colour}`);
+    
+    // calc delay for this pixel
+    if (timestamp) {
+      batchDelayMs += (now - timestamp);
+    }
   });
   await kv.set(["grid"], grid.value);
+
+  // update metrics
+  totalBatches++;
+  totalProcessedPixels += batch.length;
+  totalProcessingDelayMS += (batchDelayMs / batch.length);
+  
+  // log metrics
+  const avgBatchSize = totalProcessedPixels / totalBatches;
+  const avgDelayMs = totalProcessingDelayMS / totalBatches;
+  console.log(`Batch metrics: Size=${batch.length}, Avg Size=${avgBatchSize.toFixed(2)}, Avg Delay=${avgDelayMs.toFixed(2)}ms`);
 
   // notify clients of all altered pixels
   notifyClients(batch);
