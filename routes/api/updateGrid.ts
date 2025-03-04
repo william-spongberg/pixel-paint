@@ -11,8 +11,14 @@ if (!isBuildMode) {
 }
 
 // batching
-const BATCH_SIZE = 10;
-const BATCH_DELAY_MS = 100;
+const MAX_BATCH_SIZE = 50;
+const MIN_BATCH_SIZE = 5;
+const MAX_BATCH_DELAY = 300;
+const MIN_BATCH_DELAY = 50;
+const TARGET_AVG_DELAY = 150;
+const ADJUSTMENT_PERIOD = 10;
+let batchSize = 10;
+let batchDelay = 100;
 let batchTimer: number | null = null;
 
 // post queue
@@ -23,6 +29,7 @@ let isProcessing = false;
 let totalBatches = 0;
 let totalProcessedPixels = 0;
 let totalProcessingDelayMS = 0;
+
 
 export const handler: Handlers<Pixel> = {
   async GET(_req, _ctx) {
@@ -51,7 +58,7 @@ export const handler: Handlers<Pixel> = {
     pixelQueue.push({ index, colour, timestamp:Date.now()});
 
     // if batch size reached, process immediately.
-    if (pixelQueue.length >= BATCH_SIZE && !isProcessing) {
+    if (pixelQueue.length >= batchSize && !isProcessing) {
       if (batchTimer) {
         clearTimeout(batchTimer);
         batchTimer = null;
@@ -62,7 +69,7 @@ export const handler: Handlers<Pixel> = {
       batchTimer = setTimeout(() => {
         processPixelQueue();
         batchTimer = null;
-      }, BATCH_DELAY_MS);
+      }, batchDelay);
     }
 
     return new Response("Colour set successfully", { status: 200 });
@@ -86,6 +93,29 @@ async function initialiseGrid() {
   return GRID;
 }
 
+function adjustBatch(currentAvgDelay: number) {
+  // adjust every 10 batches
+  if (totalBatches % ADJUSTMENT_PERIOD !== 0) return;
+  
+  const prevBatchSize = batchSize;
+  const prevBatchDelay = batchDelay;
+  
+  if (currentAvgDelay > TARGET_AVG_DELAY * 1.2) {
+    // if high delay, increase batch size
+    batchSize = Math.min(MAX_BATCH_SIZE, batchSize + 2);
+    batchDelay = Math.max(MIN_BATCH_DELAY, batchDelay - 10);
+  } else if (currentAvgDelay < TARGET_AVG_DELAY * 0.8) {
+    // low delay, decrease batch size
+    batchSize = Math.max(MIN_BATCH_SIZE, batchSize - 1);
+    batchDelay = Math.min(MAX_BATCH_DELAY, batchDelay + 5);
+  }
+  
+  // log updated params
+  if (prevBatchSize !== batchSize || prevBatchDelay !== batchDelay) {
+    console.log(`Auto-scaling: Adjusted batch parameters - Size: ${prevBatchSize} → ${batchSize}, Delay: ${prevBatchDelay}ms → ${batchDelay}ms`);
+  }
+}
+
 async function processPixelQueue() {
   if (isProcessing) return;
   isProcessing = true;
@@ -98,7 +128,7 @@ async function processPixelQueue() {
 
   // get current time for metrics
   const now = Date.now();
-  let batchDelayMs = 0;
+  let batchDelayMS = 0;
 
   // grab grid from kv
   const grid: any = await kv.get(["grid"]);
@@ -113,7 +143,7 @@ async function processPixelQueue() {
     
     // calc delay for this pixel
     if (timestamp) {
-      batchDelayMs += (now - timestamp);
+      batchDelayMS += (now - timestamp);
     }
   });
   await kv.set(["grid"], grid.value);
@@ -121,12 +151,15 @@ async function processPixelQueue() {
   // update metrics
   totalBatches++;
   totalProcessedPixels += batch.length;
-  totalProcessingDelayMS += (batchDelayMs / batch.length);
+  totalProcessingDelayMS += (batchDelayMS / batch.length);
   
   // log metrics
   const avgBatchSize = totalProcessedPixels / totalBatches;
-  const avgDelayMs = totalProcessingDelayMS / totalBatches;
-  console.log(`Batch metrics: Size=${batch.length}, Avg Size=${avgBatchSize.toFixed(2)}, Avg Delay=${avgDelayMs.toFixed(2)}ms`);
+  const avgDelayMS = totalProcessingDelayMS / totalBatches;
+  console.log(`Batch metrics: Size=${batch.length}, Avg Size=${avgBatchSize.toFixed(2)}, Avg Delay=${avgDelayMS.toFixed(2)}ms`);
+
+  // auto-scale batch size + delay based on current average delay
+  adjustBatch(avgDelayMS);
 
   // notify clients of all altered pixels
   notifyClients(batch);
