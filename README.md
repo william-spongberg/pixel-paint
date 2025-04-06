@@ -36,6 +36,10 @@ of this - ah well!_
 2. Value is written to [indexedDB](global\utils.ts) (Deno doesn't support cookie or web storage)
 3. Colour is remembered when user next opens website
 
+## Preventing Lag
+
+The write KV is located in the US which does unfortunately add some permanent delay for all regions outside of this area. However, this can be accounted for by sending data in batches to avoid hitting rate limits, instantly displaying client-side changes to the grid and auto scaling the cutoffs for batch sizes and batch delays according to the current average delay.
+
 ---
 
 ### Developer Usage
