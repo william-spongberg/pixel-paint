@@ -129,46 +129,34 @@ interface FooterProps {
   colour?: string;
   textColour?: string;
   author?: string;
-  isBeta?: boolean;
 }
 
 export function Footer({
   colour = FOOTER_COLOUR,
   textColour = "text-gray-400",
   author = "",
-  isBeta = false,
 }: FooterProps) {
   return (
     <>
       <footer
         class={`flex flex-col items-center w-auto ${colour} ${textColour}`}
       >
-        <div class="flex flex-col justify-center items-center sm:p-4 md:p-2 pb-16 md:pb-2">
-          {isBeta
-            ? (
-              <>
-                <p class="text-[#748CAB] mb-0">
-                  This website is in beta.
-                </p>
-                <div class="hidden md:block">&nbsp;</div>
-              </>
-            )
-            : null}
-          <p>
-            <div class="gap-2 pb-2 flex">
-              <Button href="mailto:william@spongberg.dev">
-                <Icons.Email />
-              </Button>
-              <Button href="https://www.linkedin.com/in/william-spongberg/">
-                <Icons.LinkedIn />
-              </Button>
-              <Button href="https://github.com/william-spongberg">
-                <Icons.GitHub />
-              </Button>
-            </div>
-            &copy; {author} {new Date().getFullYear()}. All rights reserved.
-          </p>
-        </div>
+        <div class="flex flex-col md:flex-row justify-center items-center h-auto md:h-16 p-4 md:p-2 pb-16 md:pb-2">
+        <p class="mb-2 md:mb-0">
+        Created by{" "}
+        <a
+          href="https://github.com/william-spongberg"
+          class="text-blue-500 hover:underline"
+        >
+          {author}
+        </a>
+        </p>
+        <p class="hidden md:block mx-2">|</p>
+        <p>
+        &copy; {author}{" "}
+        {new Date().getFullYear()}. All rights reserved.
+        </p>
+      </div>
       </footer>
     </>
   );
